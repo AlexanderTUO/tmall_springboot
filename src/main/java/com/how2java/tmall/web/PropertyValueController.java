@@ -16,7 +16,7 @@ import java.util.Date;
 @org.springframework.stereotype.Controller
 public class PropertyValueController {
     Logger logger = LoggerFactory.getLogger(PropertyValueController.class);
-    @RequestMapping("hello")
+    @RequestMapping("hello7")
     public String hello(Model model) {
         logger.info("hello,我是日志！");
         model.addAttribute("now", DateFormat.getDateTimeInstance().format(new Date()));

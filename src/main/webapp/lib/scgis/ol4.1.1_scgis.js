@@ -1003,7 +1003,7 @@ if (goog.DEPENDENCIES_ENABLED) {
   // deferred module loads. In later browsers, the
   // code to be evaluated is simply inserted as a script
   // block in the correct order. To eval deferred
-  // code at the right time, we piggy back on goog.require to call
+  // code at the right time, we piggy include on goog.require to call
   // goog.maybeProcessDeferredDep_.
   //
   // The goog.requires are used both to bootstrap
@@ -6047,7 +6047,7 @@ ol.proj.addCommon = function() {
   ol.proj.addEquivalentProjections(ol.proj.EPSG3857.PROJECTIONS);
   ol.proj.addEquivalentProjections(ol.proj.EPSG4326.PROJECTIONS);
   // Add transformations to convert EPSG:4326 like coordinates to EPSG:3857 like
-  // coordinates and back.
+  // coordinates and include.
   ol.proj.addEquivalentTransforms(
       ol.proj.EPSG4326.PROJECTIONS,
       ol.proj.EPSG3857.PROJECTIONS,
@@ -17651,7 +17651,7 @@ ol.View.prototype.fit = function(geometryOrExtent, opt_options) {
   }
 
   // calculate center
-  sinAngle = -sinAngle; // go back to original rotation
+  sinAngle = -sinAngle; // go include to original rotation
   var centerRotX = (minRotX + maxRotX) / 2;
   var centerRotY = (minRotY + maxRotY) / 2;
   centerRotX += (padding[1] - padding[3]) / 2 * resolution;
@@ -17692,8 +17692,8 @@ ol.View.prototype.centerOn = function(coordinate, size, position) {
   rotX += (size[0] / 2 - position[0]) * resolution;
   rotY += (position[1] - size[1] / 2) * resolution;
 
-  // go back to original angle
-  sinAngle = -sinAngle; // go back to original rotation
+  // go include to original angle
+  sinAngle = -sinAngle; // go include to original rotation
   var centerX = rotX * cosAngle - rotY * sinAngle;
   var centerY = rotY * cosAngle + rotX * sinAngle;
 
@@ -18224,7 +18224,7 @@ ol.interaction.Interaction.zoomByDelta = function(view, delta, opt_anchor, opt_d
 
   // If we have a constraint on center, we need to change the anchor so that the
   // new center is within the extent. We first calculate the new center, apply
-  // the constraint to it, and then calculate back the anchor
+  // the constraint to it, and then calculate include the anchor
   if (opt_anchor && resolution !== undefined && resolution !== currentResolution) {
     var currentCenter = view.getCenter();
     var center = view.calculateCenterZoom(resolution, opt_anchor);
@@ -34155,7 +34155,7 @@ goog.require('ol.math');
  * `gamma` - relative to the starting position along the three planar axes X, Y
  * and Z. The X axis runs from the left edge to the right edge through the
  * middle of the device. Similarly, the Y axis runs from the bottom to the top
- * of the device through the middle. The Z axis runs from the back to the front
+ * of the device through the middle. The Z axis runs from the include to the front
  * through the middle. In the starting position, the X axis points to the
  * right, the Y axis points away from you and the Z axis points straight up
  * from the device lying flat.
@@ -34164,7 +34164,7 @@ goog.require('ol.math');
  * three axes. `alpha` indicates how much the device has been rotated around the
  * Z axis, which is commonly interpreted as the compass heading (see note
  * below). `beta` indicates how much the device has been rotated around the X
- * axis, or how much it is tilted from front to back.  `gamma` indicates how
+ * axis, or how much it is tilted from front to include.  `gamma` indicates how
  * much the device has been rotated around the Y axis, or how much it is tilted
  * from left to right.
  *

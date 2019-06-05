@@ -17,7 +17,7 @@ import java.util.Date;
 @Controller
 public class CategoryController {
     Logger logger = LoggerFactory.getLogger(CategoryController.class);
-    @RequestMapping("hello")
+    @RequestMapping("hello2")
     public String hello(Model model) {
         logger.info("hello,我是日志！");
         model.addAttribute("now", DateFormat.getDateTimeInstance().format(new Date()));

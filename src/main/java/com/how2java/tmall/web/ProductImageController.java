@@ -16,7 +16,7 @@ import java.util.Date;
 @org.springframework.stereotype.Controller
 public class ProductImageController {
     Logger logger = LoggerFactory.getLogger(ProductImageController.class);
-    @RequestMapping("hello")
+    @RequestMapping("hello5")
     public String hello(Model model) {
         logger.info("hello,我是日志！");
         model.addAttribute("now", DateFormat.getDateTimeInstance().format(new Date()));

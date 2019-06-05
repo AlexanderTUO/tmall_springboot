@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.xml.bind.PrintConversionEvent;
+import java.util.Date;
 
 /**
  * @Author: tyk
@@ -11,10 +13,10 @@ import javax.persistence.*;
  * @Description:
  */
 @Entity
-@Table(name="user")
+@Table(name="review")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})//这个属性不进行Json的转换，放置json转换异常错误
 @Data
-public class User {
+public class Review {
 //    JPA提供的四种标准用法为TABLE,SEQUENCE,IDENTITY,AUTO.
 //    TABLE：使用一个特定的数据库表格来保存主键。
 //    SEQUENCE：根据底层数据库的序列来生成主键，条件是数据库支持序列。
@@ -26,12 +28,17 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    private String name;
-    private String password;
-    private String salt;
+    private String content;
 
-    @Transient//不会序列化
-    private String anonymousName;
+    @ManyToOne
+    @JoinColumn(name = "pid")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "uid")
+    private User user;
+
+    private Date createDate;
 
 
 

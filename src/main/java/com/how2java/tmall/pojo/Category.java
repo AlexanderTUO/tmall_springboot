@@ -2,8 +2,10 @@ package com.how2java.tmall.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @Author: tyk
@@ -11,10 +13,10 @@ import javax.persistence.*;
  * @Description:
  */
 @Entity
-@Table(name="user")
+@Table(name="category")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})//这个属性不进行Json的转换，放置json转换异常错误
 @Data
-public class User {
+public class Category {
 //    JPA提供的四种标准用法为TABLE,SEQUENCE,IDENTITY,AUTO.
 //    TABLE：使用一个特定的数据库表格来保存主键。
 //    SEQUENCE：根据底层数据库的序列来生成主键，条件是数据库支持序列。
@@ -27,12 +29,18 @@ public class User {
     private Integer id;
 
     private String name;
-    private String password;
-    private String salt;
 
     @Transient//不会序列化
-    private String anonymousName;
+    private List<Product> products;
 
+    @Transient//不会序列化
+    private List<List<Product>> productsByRow;
 
-
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

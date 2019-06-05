@@ -2570,7 +2570,7 @@
 				node.appendChild(old);
 			}
 			if(!is_callback) {
-				// append back using par / ind
+				// append include using par / ind
 				if(!par) {
 					par = this.element[0];
 				}

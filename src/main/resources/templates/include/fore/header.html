@@ -1,0 +1,96 @@
+<template th:fragment="html">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+
+    <style href="/lib/bootstrap-3.3.7-dist/css/bootstrap.css"></style>
+    <script src="/lib/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+
+    <script src="/lib/vue/vue.min.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="/lib/moment/moment.js"></script>
+
+    <style href="/css/fore/style.css"></style>
+
+    <script>
+        $(function () {
+            console.log('我来了');
+        });
+
+        //获取页面参数
+        function getUrlParas(para) {
+            //获取搜索链接
+            var search = location.search;
+            var arrPara = new Array();
+            var arrVal = new Array();
+
+            //解析链接参数和值
+            if (search != "") {
+                var index = 0;
+                search = search.substr(1);//去掉问号
+
+                arrPara = search.split("&");
+
+                for (var i = 0; i < arrPara; i++) {
+                    var paraPre = para + "=";
+                    if (arrPara[i].indexOf(paraPre)==0&&paraPre.length<arrPara[i].length) {
+                        arrVal[index] = decodeURI(arrPara[i].substr(paraPre.length)); //解码避免乱码
+                        index++;
+                    }
+                }
+            }
+
+            //返回参数值
+            if (arrVal.length == 0) {
+                return null;
+            }else if (arrVal.length == 1) {
+                return arrVal[0];
+            } else {
+                return arrVal;
+            }
+
+        }
+
+        //格式化金额
+        function formatMoney(num) {
+
+            
+        }
+
+        //判断是否为空
+        function checkEmpty(id,name) {
+            var value = $("#" + id).val();
+            if (value.length == 0) {
+                $("#" + id)[0].focus();
+                return false;
+            }
+            return true;
+        }
+
+        //给超链接添加默认监听
+        function linkDefultActions() {
+
+        }
+
+        //添加vue全局拦截器:字符串截取，格式化金额，格式化日期
+        Vue.filter("subStringFilter", function (value,start,end) {
+            if (!value) {
+                return "";
+            }
+            return value.substring(start, end);
+        });
+
+        Vue.filter("formatMoneyFilter", function (value) {
+            return formatMoney(value);
+        });
+
+        Vue.filter("formatDateFilter", function (value,formatString) {
+            if (null == value) {
+                return "";
+            }
+            formatString = formatString || "YYYY-MM-DD HH:mm:ss";
+            return moment(value).format(formatString);
+        });
+    </script>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+</template>
