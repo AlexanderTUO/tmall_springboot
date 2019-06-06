@@ -1,5 +1,5 @@
 <nav class="top" th:fragment="html">
-    <a th:href="">
+    <a href="#">
         <span class="glyphicon glyphicon-home redColor" style="color:#C40000;margin: 0px;"></span>
         天猫首页
     </a>
@@ -7,19 +7,19 @@
     <span>喵，欢迎来到天猫</span>
 
     <span th:if="${null!=session.user}">
-        <a th:href="login" th:text="${session.user.name}"></a>
-        <a th:href="forelogout">退出</a>
+        <a href="login" th:text="${session.user.name}"></a>
+        <a href="forelogout">退出</a>
     </span>
     <span></span>
 
     <span th:if="${null==session.user}">
-        <a th:href="login">登录</a>
-        <a th:href="register">免费注册</a>
+        <a href="login">登录</a>
+        <a href="register">免费注册</a>
     </span>
 
     <span class="pull-right">
-        <a th:href="bought">我的订单</a>
-        <a th:href="cart">
+        <a href="bought">我的订单</a>
+        <a href="cart">
             <span class="glyphicon glyphicon-shopping-cart redColor" style="color:#C40000;margin: 0px;"></span>
             购物车<strong th:text="${session.cartTotalItemNumber}"></strong>件
         </a>

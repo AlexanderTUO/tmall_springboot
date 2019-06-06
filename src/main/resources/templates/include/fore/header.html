@@ -5,8 +5,9 @@
     <script src="/lib/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 
     <script src="/lib/vue/vue.min.js"></script>
+    <script src="/lib/vue/axios/0.17.1/axios.min.js"></script>
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!--<script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
 
     <script src="/lib/moment/moment.js"></script>
 
@@ -53,8 +54,20 @@
 
         //格式化金额
         function formatMoney(num) {
-
-            
+            num = new String(num);
+            num = num.toString().replace(/\$|\,/g,'');
+            if(isNaN(num))
+                num = "0";
+            sign = (num == (num = Math.abs(num)));
+            num = Math.floor(num*100+0.50000000001);
+            cents = num%100;
+            num = Math.floor(num/100).toString();
+            if(cents<10)
+                cents = "0" + cents;
+            for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+                num = num.substring(0,num.length-(4*i+3))+','+
+                    num.substring(num.length-(4*i+3));
+            return (((sign)?'':'-') + num + '.' + cents);
         }
 
         //判断是否为空
@@ -69,7 +82,17 @@
 
         //给超链接添加默认监听
         function linkDefultActions() {
+            $("div#footer a[href$=nowhere]").click(function () {
+                alert("模仿天猫的链接！！！");
+            });
 
+            $("a.wangwanglink").click(function(){
+                alert("模仿旺旺的图标，并不会打开旺旺");
+            });
+
+            $("a.notImplementLink").click(function(){
+                alert("这个功能没做，蛤蛤~");
+            });
         }
 
         //添加vue全局拦截器:字符串截取，格式化金额，格式化日期
