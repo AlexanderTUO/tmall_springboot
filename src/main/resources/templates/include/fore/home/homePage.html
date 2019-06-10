@@ -36,8 +36,8 @@
                 var top = $(this).position().top();
                 var width = $(this).css("width");
 
-                var destWidth = parseInt(left) + parseInt(width) / 2;
-                $("img#catear").css("left", destWidth);
+                var destLeft = parseInt(left) + parseInt(width) / 2;
+                $("img#catear").css("left", destLeft);
                 $("img#catear").css("top", top - 20);
                 $("img#catear").fadeIn(500);
             });
@@ -56,11 +56,11 @@
                     $(this).css("color", "#87CEFA");
                 }
             });
-            
+            console.log('听雪一');
             $(function () {
                 var data4Vue = {
                     uri: "forehome",
-
+                    categories: []
                 };
                 var vue = new Vue({
                     el: "workingArea",
@@ -73,7 +73,7 @@
                         load: function () {
                             var url = this.uri;
                             axios.get(url).then(function(response){
-                                vue.category = response.data;
+                                vue.categories = response.data;
                                 vue.$nextTick(function () {//页面加载完后渲染
                                     homepageRegisterListeners();
                                 })
@@ -97,6 +97,6 @@
         }
     </script>
     <title>模仿天猫官网</title>
-    <div th:replace="/include/fore/home/categoryAndCarousel::html"></div>
-    <div th:replace="/include/fore/home/productsAsideCategories::html"></div>
+    <div th:replace="include/fore/home/categoryAndCarousel::html"></div>
+    <div th:replace="include/fore/home/homepageCategoryProducts::html"></div>
 </div>

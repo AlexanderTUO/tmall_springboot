@@ -4,13 +4,15 @@
             <div class="left-mark"></div>
             <span class="categoryTitle">{{c.name}}</span>
             <br/>
-            <a :href="product?pid=" +p.id class="productItem">
-                <img :src="'/img/productSingle_middle/'+p.firstProductImage.id+'.jpg'" width="100px">
-            </a>
-            <a :href="product?pid=" +p.id class="productItemDescLink">
-                <span class="productItemDesc">[热销]{p.name|subStringFilter(0,20)}</span>
-            </a>
-            <span class="productPrice">{{p.originalPrice|formatMoneyFilter}}</span>
+            <div class="productItem" v-for="p.index in c.products" v-if="index<5">
+                <a :href="product?pid=" +p.id>
+                    <img :src="'/img/productSingle_middle/'+p.firstProductImage.id+'.jpg'" width="100px">
+                </a>
+                <a :href="'product?pid=' +p.id" class="productItemDescLink">
+                    <span class="productItemDesc">[热销]eachCategory{p.name|subStringFilter(0,20)}</span>
+                </a>
+                <span class="productPrice">{{p.promotePrice|formatMoneyFilter}}</span>
+            </div>
         </div>
         <div style="clear:both"></div>
         <img class="endpng" id="endpng" src="/img/site/end.png"/>

@@ -127,7 +127,7 @@ div.categoryWithCarousel div.categoryMenu {
 	z-index: 1;
 }
 
-div.categoryWithCarousel div.productsAsideCategories {
+div.categoryWithCarousel div.productsAsideCategorys {
 	width: 825px;
 	height: 510px;
 	background-color: white;
@@ -187,22 +187,22 @@ div.categoryWithCarousel div.head {
 	display: inline-block;
 }
 
-div.productsAsideCategories a {
+div.productsAsideCategorys a {
 	color: #999;
 	font-size: 14px;
 	margin: 8px;
 }
 
-div.productsAsideCategories a:hover {
+div.productsAsideCategorys a:hover {
 	color: #C40000;
 	text-decoration: none;
 }
 
-div.productsAsideCategories div.row {
+div.productsAsideCategorys div.row {
 	margin: 20px 80px 0px 80px;
 }
 
-div.productsAsideCategories div.row div.seperator {
+div.productsAsideCategorys div.row div.seperator {
 	margin-top: 20px;
 	border-bottom-style: dashed;
 	border-bottom-width: 1px;
