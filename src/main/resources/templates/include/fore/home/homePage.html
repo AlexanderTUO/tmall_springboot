@@ -32,8 +32,8 @@
             });
 
             $("div.rightMenu span").mouseenter(function () {
-                var left = $(this).position().left();
-                var top = $(this).position().top();
+                var left = $(this).position().left;
+                var top = $(this).position().top;
                 var width = $(this).css("width");
 
                 var destLeft = parseInt(left) + parseInt(width) / 2;
@@ -45,7 +45,7 @@
                 $("img#catear").hide();
             });
 
-            var left = $("div#carousel-of-product").offset().left();
+            var left = $("div#carousel-of-product").offset().left;
             $("div.categoryMenu").css("left", left - 20);
             $("div.categoryWithCarousel div.head").css("left", left);
             $("div.productsAsideCategories").css("left", left-20);
@@ -56,47 +56,47 @@
                     $(this).css("color", "#87CEFA");
                 }
             });
-            console.log('听雪一');
-            $(function () {
-                var data4Vue = {
-                    uri: "forehome",
-                    categories: []
-                };
-                var vue = new Vue({
-                    el: "workingArea",
-                    data: data4Vue,
-                    mounted:function () {
-                        linkDefultActions();
-                        this.load();
-                    },
-                    methods:{
-                        load: function () {
-                            var url = this.uri;
-                            axios.get(url).then(function(response){
-                                vue.categories = response.data;
-                                vue.$nextTick(function () {//页面加载完后渲染
-                                    homepageRegisterListeners();
-                                })
-                            })
-                        }
-                    },
-                    filter:{
-                        subTitleFilter:function (value) {
-                            if (!value) {
-                                return "";
-                            }
-                            return value.split(" ")[0];
-                        }
-                    }
-
-
-                })
-            })
-
-
         }
+        $(function () {
+            var data4Vue = {
+                uri: "forehome",
+                categories: []
+            };
+            var vue = new Vue({
+                el: "workingArea",
+                data: data4Vue,
+                mounted:function () {
+                    linkDefultActions();
+                    this.load();
+                },
+                methods:{
+                    load: function () {
+                        var url = this.uri;
+                        axios.get(url).then(function(response){
+                            vue.categories = response.data;
+                            vue.$nextTick(function () {//页面加载完后渲染
+                                homepageRegisterListeners();
+                            })
+                        })
+                    }
+                },
+                filter:{
+                    subTitleFilter:function (value) {
+                        if (!value) {
+                            return "";
+                        }
+                        return value.split(" ")[0];
+                    }
+                }
+
+
+            })
+        })
     </script>
     <title>模仿天猫官网</title>
-    <div th:replace="include/fore/home/categoryAndCarousel::html"></div>
-    <div th:replace="include/fore/home/homepageCategoryProducts::html"></div>
+
+    <div class="homepageDiv">
+        <div th:replace="include/fore/home/categoryAndCarousel::html"></div>
+        <div th:replace="include/fore/home/homepageCategoryProducts::html"></div>
+    </div>
 </div>

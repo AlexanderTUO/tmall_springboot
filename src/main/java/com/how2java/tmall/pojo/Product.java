@@ -14,6 +14,7 @@ import java.util.Date;
 @Entity
 @Table(name="product")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})//这个属性不进行Json的转换，放置json转换异常错误
+//@Document(indexName = "tmall_springboot",type = "product")
 @Data
 public class Product {
 //    JPA提供的四种标准用法为TABLE,SEQUENCE,IDENTITY,AUTO.
@@ -37,7 +38,6 @@ public class Product {
     private float promotePrice;
     private int stock;
     private Date createDate;
-    
 
     @Transient//不会序列化
     private ProductImage firstProductImage;
