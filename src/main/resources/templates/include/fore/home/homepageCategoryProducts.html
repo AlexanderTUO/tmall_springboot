@@ -1,20 +1,25 @@
-<div class th:fragment="html">
-    <div class="homepageCategoryProducts" v-for="c in categories">
-        <div class="eachHomepageCategoryProducts" v-for="p,index in c.products ">
+<div th:fragment="html">
+    <div class="homepageCategoryProducts">
+        <div class="eachHomepageCategoryProducts" v-for="c in categories">
             <div class="left-mark"></div>
             <span class="categoryTitle">{{c.name}}</span>
-            <br/>
-            <div class="productItem" v-for="p.index in c.products" v-if="index<5">
-                <a :href="product?pid=" +p.id>
-                    <img :src="'/img/productSingle_middle/'+p.firstProductImage.id+'.jpg'" width="100px">
+            <br>
+            <div class="productItem"  v-for="p,index in c.products" v-if="index<5" >
+                <a :href="'product?pid='+p.id">
+                    <img width="100px" :src="'img/productSingle_middle/'+p.firstProductImage.id+'.jpg'">
                 </a>
-                <a href="'product?pid=' +p.id" class="productItemDescLink">
-                    <span class="productItemDesc">[热销]eachCategory{p.name|subStringFilter(0,20)}</span>
+
+                <a class="productItemDescLink" href="'product?pid='+p.id">
+									<span class="productItemDesc">[热销]
+			eachCategory						{{p.name | subStringFilter(0,20)}}
+									</span>
                 </a>
-                <span class="productPrice">{{p.promotePrice|formatMoneyFilter}}</span>
+                <span class="productPrice">
+									{{p.promotePrice | formatMoneyFilter}}
+								</span>
             </div>
+            <div style="clear:both"></div>
         </div>
-        <div style="clear:both"></div>
-        <img class="endpng" id="endpng" src="/img/site/end.png"/>
+        <img id="endpng" class="endpng" src="img/site/end.png">
     </div>
 </div>

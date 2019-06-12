@@ -5,100 +5,81 @@ import com.how2java.tmall.pojo.Category;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author: tyk
- * @Date: 2019/6/5 11:48
- * @Description:
- */
 @Service
-public class ProductService {
-    @Autowired
-    private ProductDao productDao;
+public class ProductService  {
+	
+	@Autowired
+	ProductDao productDAO;
+	@Autowired
+    CategoryService categoryService;
+	@Autowired
+    ProductImageService productImageService;
 
-    public Page4Navigator<Category> list(int start, int size, int navigatePages) {
-        return null;
-    }
+	public void add(Product bean) {
+		productDAO.save(bean);
+	}
 
-    public List<Category> list() {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        List list = productDao.findAll(sort);
-        return list;
-    }
+	public void delete(int id) {
+		productDAO.delete(id);
+	}
 
-    public void add(Product bean) {
-        productDao.save(bean);
-    }
+	public Product get(int id) {
+		return productDAO.findOne(id);
+	}
 
-    public void delete(int id) {
-        productDao.deleteById(id);
-    }
+	public void update(Product bean) {
+		productDAO.save(bean);
+	}
 
-    public void update(Product bean) {
-        productDao.save(bean);
-    }
+	public Page4Navigator<Product> list(int cid, int start, int size, int navigatePages) {
+    	Category category = categoryService.get(cid);
+    	Sort sort = new Sort(Sort.Direction.DESC, "id");
+    	Pageable pageable = new PageRequest(start, size, sort);    	
+    	Page<Product> pageFromJPA =productDAO.findByCategory(category,pageable);
+    	return new Page4Navigator<>(pageFromJPA,navigatePages);
+	}
 
-    public Product get(int id) {
-        Product product = productDao.getOne(id);
-        return product;
-    }
+	public void fill(List<Category> categorys) {
+		for (Category category : categorys) {
+			fill(category);
+		}
+	}
+	public void fill(Category category) {
+		List<Product> products = listByCategory(category);
+		productImageService.setFirstProdutImages(products);
+		category.setProducts(products);
+	}
 
-    /**
-     * 为分类填充产品
-     * @param category
-     */
-    public void fill(Category category) {
-        //根据分类获取产品
-        List<Product> products = listByCategory(category);
 
-        //填充产品图片
+	public void fillByRow(List<Category> categorys) {
+		int productNumberEachRow = 8;
+		for (Category category : categorys) {
+			List<Product> products =  listByCategory(category);
+			List<List<Product>> productsByRow =  new ArrayList<>();
+			for (int i = 0; i < products.size(); i+=productNumberEachRow) {
+				int size = i+productNumberEachRow;
+				size= size>products.size()?products.size():size;
+				List<Product> productsOfEachRow =products.subList(i, size);
+				productsByRow.add(productsOfEachRow);
+			}
+			category.setProductsByRow(productsByRow);
+		}
+	}
 
-        //在分类中填充产品
-        category.setProducts(products);
+	public List<Product> listByCategory(Category category){
+		return productDAO.findByCategoryOrderById(category);
+	}
+	
 
-    }
 
-    /**
-     * 为多个分类填充产品
-     * @param categories
-     */
-    public void fill(List<Category> categories) {
-        for (Category category : categories) {
-            fill(category);
-        }
-
-    }
-
-    /**
-     * 为分类填充推荐产品
-     * @param categories
-     */
-    public void fillByRow(List<Category> categories) {
-        int productNumEachRow = 8;
-        for (Category category : categories) {
-            List<Product> products = listByCategory(category);
-            List<List<Product>> productsByRow = new ArrayList<>();
-            for (int i = 0; i < products.size(); i+=productNumEachRow) {
-                int size = i + productNumEachRow;
-                size = size > products.size() ? products.size() : size;
-                List<Product> productsEachRow = products.subList(i, size);
-                productsByRow.add(productsEachRow);
-            }
-            category.setProductsByRow(productsByRow);
-        }
-    }
-
-    /**
-     * 查询某个分类下的所有产品
-     * @param category
-     */
-    public List<Product> listByCategory(Category category) {
-        return productDao.findByCategoryOrderById(category);
-    }
 
 }
