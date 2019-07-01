@@ -29,4 +29,9 @@ public class ForePageController {
         logger.info("");
         return "fore/home";
     }
+
+    @GetMapping(value = "/register")
+    public String register() {
+        return "fore/register";
+    }
 }
