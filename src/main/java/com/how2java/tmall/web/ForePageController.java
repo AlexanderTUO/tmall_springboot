@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -34,4 +35,22 @@ public class ForePageController {
     public String register() {
         return "fore/register";
     }
+
+    @GetMapping(value = "/registerSuccess")
+    public String registerSuccess() {
+        return "fore/registerSuccess";
+    }
+
+    @GetMapping(value = "/login")
+    public String login() {
+        return "fore/login";
+    }
+
+    @GetMapping(value = "/loginOut")
+    public String loginOut(HttpSession session) {
+        session.removeAttribute("user");
+        return "redirect:home";
+    }
+
+
 }

@@ -40,7 +40,7 @@
                         axios.post(url,this.user).then(function (response) {
                             var result = response.data;
                             if (result.code == 0) {
-                                location.url = "registerSuccess";
+                                location.href = "registerSuccess";
                             } else {
                                 $("span.errorMessage").html(result.message);
                                 $("div.registerErrorMessageDiv").css("visibility", "visible");

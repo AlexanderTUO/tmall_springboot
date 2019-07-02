@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.servlet.http.HttpSession;
+import javax.swing.*;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,19 @@ public class ForeRESTController {
         }
         user.setName(name);
         userService.addUser(user);
+        return Result.success();
+    }
+
+    @PostMapping("/foreLogin")
+    public Object login(@RequestBody User userParam, HttpSession session) {
+        String name = userParam.getName();
+        name = HtmlUtils.htmlEscape(name);
+
+        User user = userService.getUser(name, userParam.getPassword());
+        if (null == user) {
+            return Result.fail("用户名或密码错误");
+        }
+        session.setAttribute("user",user);
         return Result.success();
     }
 }

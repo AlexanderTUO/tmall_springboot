@@ -27,4 +27,8 @@ public class UserService {
     public void addUser(User user) {
         userDAO.save(user);
     }
+
+    public User getUser(String name, String password) {
+        return userDAO.getByNameAndPassword(name, password);
+    }
 }
