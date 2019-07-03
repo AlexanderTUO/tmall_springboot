@@ -1,7 +1,55 @@
-<div th:fragement="html">
+<div th:fragment="html">
     <script>
         $(function () {
-            
+            var pid = getUrlParas("pid");
+            var data4Vue = {
+                uri: "foreProduct",
+                products: '',
+                category: [],
+                firstProductImage: null,
+                pvs: [],
+                reviews: [],
+                showDetail: true,
+                showReview: true,
+                user: {
+                    name: "",
+                    password: ""
+                },
+            };
+            var vue = new Vue({
+                el: "#wordingArea",
+                data: data4Vue,
+                mounted: function () {
+                    linkDefaultActions();
+                    this.load();
+                },
+                methods:{
+                    load:function () {
+                        var url = this.uri + pid;
+                        axios.get(url).then(function (response) {
+                            var result = response.data;
+                            vue.products = result.product;
+                            vue.pvs = result.productValues;
+                            vue.reviews = result.reviews;
+                            vue.category = result.product.category;
+                            vue.firstProductImage = result.product.firstProductImage;
+
+                            vue.$nextTick(function () {
+                                imgAndInfoPageRegisterListeners(vue);
+                            })
+                        })
+                    }
+                }
+            })
         })
     </script>
+    <title>模仿天猫官网---{{p.name}}</title>
+    <div class="categoryPictureInProductPageDiv">
+        <img v-if="category!=null" class="categoryPictureInProductPageDiv" :src="'img/category/'+category.id+'.jpg'">
+    </div>
+    <div class="productPageDiv">
+        <div th:replace="include/fore/product/imgAndInfo::html"></div>
+        <div th:replace="include/fore/product/productReview::html"></div>
+        <div th:replace="include/fore/product/productDetail::html"></div>
+    </div>
 </div>

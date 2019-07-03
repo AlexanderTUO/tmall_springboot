@@ -1,8 +1,20 @@
 <div th:fragment="html">
     <script>
-        $(function () {
-            
-        })
+        function imgAndInfoPageRegisterListeners(vue) {
+            //获取购物数量
+
+            //绑定增加、减少按钮事件
+
+            //去除添加购物车按钮的不可用属性
+
+            //增加添加购物车链接事件，判断是否登录
+
+            //立即购买链接的事件，判断是否登录
+
+            //登录按钮事件
+
+
+        }
     </script>
     <div class="imgAndInfo">
         <!--产品图片-->
@@ -49,11 +61,46 @@
                     </div>
                 </div>
             </div>
-            <div class="productSaleAndReviewNumber"></div>
-            <div class="productNumber"></div>
-            <div class="serviceCommitment"></div>
-            <div class="buyDiv"></div>
-
+            <div class="productSaleAndReviewNumber">
+                <div>销量<span class="redColor boldWord">{{p.saleCount}}</span></div>
+                <div>累计评价<span class="redColor boldWord">{{p.reviewCount}}</span></div>
+            </div>
+            <div class="productNumber">
+                <span>数量</span>
+                <span class="productNumberSettingSpan">
+                    <input class="productNumberSetting" type="text" value="1">
+                </span>
+                <span class="arrow">
+                    <a href="#nowhere" class="increaseNumber">
+                        <span class="updown">
+                            <img src="img/site/increase.png">
+                        </span>
+                    </a>
+                </span>
+                <span class="updownMiddle">
+                    <a href="#nowhere" class="decreaseNumber">
+                        <span class="updownMiddle">
+                            <img src="img/site/decrease.png">
+                        </span>
+                    </a>
+                件</span>
+                <span>库存{{p.stock}}件</span>
+            </div>
+            <div class="serviceCommitment">
+                <span class="serviceCommitmentDesc">服务承诺</span>
+                <span class="serviceCommitmentLink">
+                    <a href="#nowhere">正品保证</a>
+                    <a href="#nowhere">极速退款</a>
+                    <a href="#nowhere">赠运费险</a>
+                    <a href="#nowhere">七天无理由退换</a>
+                </span>
+            </div>
+            <div class="buyDiv">
+                <a class="buyLink"><button class="buyButton">立即购买</button></a>
+                <a href="#nowhere" class="addCartLink">
+                    <button class="addCartButton"><span class="glyphicon glyphicon-shopping-cart"></span>加入购物车</button></a>
+            </div>
+            <!--清除浮动-->
             <div style="clear:both"></div>
         </div>
     </div>
