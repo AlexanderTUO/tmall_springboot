@@ -1,0 +1,60 @@
+<div th:fragment="html">
+    <script>
+        $(function () {
+            
+        })
+    </script>
+    <div class="imgAndInfo">
+        <!--产品图片-->
+        <div class="imgInimgAndInfo">
+            <img v-if="firstProductImage！=null" :src="'img/productSingle/'+firstProductImage.id+'.jpg'" class="bigImg"/>
+            <div class="smallImageDiv">
+                <img v-for="pi in product.productSingleImage" :src="'img/productSingle_small'+pi.id+'.jpg'"
+                     :bigImageURL="'img/productSingle/'+pi.id+'.jpg'" class="smallImage"/>
+            </div>
+            <div class="img4load hidden"></div>
+        </div>
+        <!--产品信息-->
+        <div class="infoInimgAndInfo">
+            <!--标题、小标题、价格、销量和评价、库存、服务承诺和两个按钮-->
+            <div class="productTitle">
+                {{p.name}}
+            </div>
+            <div class="productSubTitle">
+                {{p.subTitle}}
+            </div>
+            <div class="productPriceDiv">
+                <div class="juhuasuan">
+                    <span class="juhuasuanBig">聚划算</span>
+                    <span>此商品即将参加聚划算，在<span class="juhuasuanTime">1天19小时</span>后开始</span>
+                </div>
+                <div class="productPriceDiv">
+                    <div class="gouwujuanDiv">
+                        <img height="160px" src="img/site/gouwujuan"/>
+                        <span>全天猫实物店通用</span>
+                    </div>
+                    <div class="originalDiv">
+                        <span class="originalPriceDesc">价格</span>
+                        <span class="originalPriceYuan">￥</span>
+                        <span class="originalPrice">
+                            {{p.originalPrice|formatMoneyFilter}}
+                        </span>
+                    </div>
+                    <div class="promotionDiv">
+                        <span class="promotionPriceDesc">价格</span>
+                        <span class="promotionPriceYuan">￥</span>
+                        <span class="promotionPrice">
+                            {{p.promotionPrice|formatMoneyFilter}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="productSaleAndReviewNumber"></div>
+            <div class="productNumber"></div>
+            <div class="serviceCommitment"></div>
+            <div class="buyDiv"></div>
+
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
