@@ -23,6 +23,10 @@ public class ProductService  {
     CategoryService categoryService;
 	@Autowired
     ProductImageService productImageService;
+	@Autowired
+	OrderItemService orderItemService;
+	@Autowired
+	ReviewService reviewService;
 
 	public void add(Product bean) {
 		productDAO.save(bean);
@@ -53,6 +57,11 @@ public class ProductService  {
 			fill(category);
 		}
 	}
+
+	/**
+	 * 为分类填充产品
+	 * @param category
+	 */
 	public void fill(Category category) {
 		List<Product> products = listByCategory(category);
 		productImageService.setFirstProdutImages(products);
@@ -78,8 +87,28 @@ public class ProductService  {
 	public List<Product> listByCategory(Category category){
 		return productDAO.findByCategoryOrderById(category);
 	}
-	
 
+	/**
+	 * 为产品设置销量和评价量
+	 * @param product
+	 */
+	public void setSaleAndReviewCount(Product product) {
+		int saleCount = orderItemService.getSaleCount(product);
+		product.setSaleCount(saleCount);
+
+		int reviewCount = reviewService.getCount(product);
+		product.setReviewCount(reviewCount);
+	}
+
+	/**
+	 * 为产品设置销量和评价量(批量)
+	 * @param products
+	 */
+	public void setSaleAndReviewCount(List<Product> products) {
+		for (Product product : products) {
+			setSaleAndReviewCount(product);
+		}
+	}
 
 
 }

@@ -1,11 +1,7 @@
 package com.how2java.tmall.web;
 
-import com.how2java.tmall.pojo.Category;
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.pojo.User;
-import com.how2java.tmall.service.CategoryService;
-import com.how2java.tmall.service.ProductService;
-import com.how2java.tmall.service.UserService;
+import com.how2java.tmall.pojo.*;
+import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +15,9 @@ import javax.servlet.http.HttpSession;
 import javax.swing.*;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: tyk
@@ -38,6 +36,15 @@ public class ForeRESTController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ProductImageService productImageService;
+
+    @Autowired
+    PropertyValueService propertyValueService;
+
+    @Autowired
+    ReviewService reviewService;
 
     @GetMapping("/forehome")
     public Object hello() {
@@ -74,5 +81,36 @@ public class ForeRESTController {
         }
         session.setAttribute("user",user);
         return Result.success();
+    }
+
+    @GetMapping("foreProduct/{pid}")
+    public Object product(@PathVariable("pid") int pid) {
+        //获取产品
+        Product product = productService.get(pid);
+
+        //获取产品的图片集合和细节图片集
+        List<ProductImage> singleImages = productImageService.listSingleProductImages(product);
+        product.setProductSingleImages(singleImages);
+
+        List<ProductImage> detailImages = productImageService.listDetailProductImages(product);
+        product.setProductDetailImages(detailImages);
+
+        //获取产品的属性值和评价
+        List<PropertyValue> propertyValues = propertyValueService.list(product);
+        List<Review> reviews = reviewService.list(product);
+
+        //为产品设置销量和评价数
+        productService.setSaleAndReviewCount(product);
+
+        //为产品设置首图
+        productImageService.setFirstProductImage(product);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("product", product);
+        map.put("propertyValue", propertyValues);
+        map.put("reviews", reviews);
+
+        return map;
+
     }
 }

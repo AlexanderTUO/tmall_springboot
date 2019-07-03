@@ -37,7 +37,7 @@ public class ProductImageService   {
 		return productImageDAO.findByProductAndTypeOrderByIdDesc(product, type_detail);
 	}
 
-	public void setFirstProdutImage(Product product) {
+	public void setFirstProductImage(Product product) {
 		List<ProductImage> singleImages = listSingleProductImages(product);
 		if(!singleImages.isEmpty())
 			product.setFirstProductImage(singleImages.get(0));
@@ -45,9 +45,9 @@ public class ProductImageService   {
 			product.setFirstProductImage(new ProductImage()); //这样做是考虑到产品还没有来得及设置图片，但是在订单后台管理里查看订单项的对应产品图片。
 
 	}
-	public void setFirstProdutImages(List<Product> products) {
+	public void setFirstProductImages(List<Product> products) {
 		for (Product product : products)
-			setFirstProdutImage(product);
+			setFirstProductImage(product);
 	}
 
 
