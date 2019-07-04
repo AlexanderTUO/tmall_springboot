@@ -1,8 +1,11 @@
 package com.how2java.tmall.web;
 
+import com.how2java.tmall.comparator.*;
 import com.how2java.tmall.pojo.*;
 import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
+import lombok.experimental.var;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +17,7 @@ import org.springframework.web.util.HtmlUtils;
 import javax.servlet.http.HttpSession;
 import javax.swing.*;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: tyk
@@ -83,6 +83,20 @@ public class ForeRESTController {
         return Result.success();
     }
 
+    /**
+     * 检查是否登录
+     * @param session
+     * @return
+     */
+    @GetMapping("/foreCheckLogin")
+    public Object checkLogin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            return Result.success();
+        }
+        return Result.fail("未登录");
+    }
+
     @GetMapping("foreProduct/{pid}")
     public Object product(@PathVariable("pid") int pid) {
         //获取产品
@@ -111,6 +125,32 @@ public class ForeRESTController {
         map.put("reviews", reviews);
 
         return map;
-
     }
+
+    @GetMapping("foreCategory/{cid}")
+    public Object category(@PathVariable int cid, String sort) {
+        Category category = categoryService.get(cid);
+        productService.fill(category);
+        productService.setSaleAndReviewCount(category.getProducts());
+        categoryService.removeCategoryFromProduct(category);
+        switch (sort) {
+            case "all":
+                Collections.sort(category.getProducts(),new ProductAllComparator());
+                break;
+            case "date":
+                Collections.sort(category.getProducts(),new ProductDateComparator());
+                break;
+            case "price":
+                Collections.sort(category.getProducts(), new ProductPriceComparator());
+                break;
+            case "review":
+                Collections.sort(category.getProducts(), new ProductReviewComparator());
+                break;
+            case "saleCount":
+                Collections.sort(category.getProducts(),new ProductSaleCountComparator());
+                break;
+        }
+        return category;
+    }
+
 }

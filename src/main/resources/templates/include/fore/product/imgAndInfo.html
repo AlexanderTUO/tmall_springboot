@@ -2,16 +2,119 @@
     <script>
         function imgAndInfoPageRegisterListeners(vue) {
             //获取购物数量
-
+            var stock = vue.p.stock;
+            $(".productNumberSetting").keyup(function () {
+                var num = $(".productNumberSetting").val();
+                if (isNaN(num) || num < 1) {
+                    num = 1;
+                }
+                if (num > stock) {
+                    num = stock;
+                }
+                $(".productNumberSetting").val(num);
+            });
             //绑定增加、减少按钮事件
+            $(".increaseNumber").click(function () {
+                var num = $(".productNumberSetting").val();
+                if (++num > stock) {
+                    num = stock;
+                }
+                $(".productNumberSetting").val(num);
+            });
+            $(".decreaseNumber").click(function () {
+                var num = $(".productNumberSetting").val();
+                if (--num < 1) {
+                    num = 1;
+                }
+                $(".productNumberSetting").val(num);
+            });
 
             //去除添加购物车按钮的不可用属性
-
             //增加添加购物车链接事件，判断是否登录
-
+            $(".addCartButton").removeAttr("disabled");
+            $(".addCartLink").click(function () {
+                var url = "foreCheckLogin";
+                axios.get(url).then(function (response) {
+                    if (response.data.code === 0) {
+                        var pid = vue.p.pid;
+                        var num = $(".productNumberSetting").val();
+                        axios.get("foreAddCart?pid=" + pid + "&num=" + num).then(function (response) {
+                            var result = response.data;
+                            if (result.code === 0) {
+                                $(".addCartButton").html("已加入购物车");
+                                $(".addCartButton").attr("disabled", true);
+                                $(".addCartButton").attr("background-color", "lightgray");
+                                $(".addCartButton").attr("border-color", "lightgray");
+                                $(".addCartButton").attr("color", "black");
+                            }
+                        })
+                    } else {
+                        //弹出登录框
+                        $('#loginModal').modal("show");
+                    }
+                })
+            });
             //立即购买链接的事件，判断是否登录
+            $(".buyLink").click(function () {
+                var url = "foreCheckLogin";
+                axios.get(url).then(function (response) {
+                    if (response.data.code === 0) {
+                        var pid = vue.p.pid;
+                        var num = $(".productNumberSetting").val();
+                        var url = "foreBuyOne?pid=" + pid + "&num=" + num;
+                        axios.get(url).then(function (response) {
+                            var oiid = response.data;
+                            location.href = "buy?oiid" + oiid;
+                        })
+                    } else {
+                        //弹出登录框
+                        $('#loginModal').modal("show");
+                    }
+
+                })
+            });
 
             //登录按钮事件
+            $("button.loginSubmitButton").click(function () {
+                var url = "foreLogin";
+                if (0 === vue.user.name.length) {
+                    $("span.errorMessage").html("请输入登录名");
+                    $("div.errorMessage").css("visibility", "visible");
+                    return;
+                }
+                if (0 === vue.user.password.length) {
+                    $("span.errorMessage").html("请输入密码");
+                    $("div.errorMessage").css("visibility", "visible");
+                    return;
+                }
+                axios.post(url, vue.user).then(function (response) {
+                    var result = response.data;
+                    if (response.code === 0) {
+                        location.href = "product?pid" + vue.p.pid;
+                    } else {
+                        $("span.errorMessage").html(result.formatErrorMessage_);
+                        $("div.errorMessage").css("visibility", "visible");
+                    }
+                })
+            });
+
+            //小图片事件
+            $("img.smallImage").mouseenter(function () {
+                var bigImgURL = $(this).attr("bigImageURL");
+                $(".bigImg").attr(src, bigImgURL);
+            });
+
+            //大图片事件
+            $("img.bigImg").load(function () {
+                $("img.smallImage").each(function () {
+                    var bigImgURL = $(this).attr("bigImageURL");
+                    var img = new Image();
+                    img.src = bigImgURL;
+                    img.onload = function (ev) {
+                        $("div.img4load").append($(img));
+                    }
+                })
+            })
 
 
         }
@@ -21,7 +124,7 @@
         <div class="imgInimgAndInfo">
             <img v-if="firstProductImage！=null" :src="'img/productSingle/'+firstProductImage.id+'.jpg'" class="bigImg"/>
             <div class="smallImageDiv">
-                <img v-for="pi in product.productSingleImage" :src="'img/productSingle_small'+pi.id+'.jpg'"
+                <img v-for="pi in product.productSingleImage" :src="'img/productSingle_small/'+pi.id+'.jpg'"
                      :bigImageURL="'img/productSingle/'+pi.id+'.jpg'" class="smallImage"/>
             </div>
             <div class="img4load hidden"></div>

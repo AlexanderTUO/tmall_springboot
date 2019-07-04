@@ -64,10 +64,9 @@ public class ProductService  {
 	 */
 	public void fill(Category category) {
 		List<Product> products = listByCategory(category);
-		productImageService.setFirstProdutImages(products);
+		productImageService.setFirstProductImages(products);
 		category.setProducts(products);
 	}
-
 
 	public void fillByRow(List<Category> categorys) {
 		int productNumberEachRow = 8;
