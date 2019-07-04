@@ -12,7 +12,7 @@ import java.util.Date;
  * @Description:
  */
 @Entity
-@Table(name="propertyvalue")
+@Table(name="review")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})//这个属性不进行Json的转换，放置json转换异常错误
 @Data
 public class Review {

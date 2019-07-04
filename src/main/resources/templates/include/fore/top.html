@@ -1,5 +1,5 @@
 <nav class="top" th:fragment="html">
-    <a href="#">
+    <a th:href="${application.contextPath}">
         <span class="glyphicon glyphicon-home redColor" style="color:#C40000;margin: 0px;"></span>
         天猫首页
     </a>
@@ -8,7 +8,7 @@
 
     <span th:if="${null!=session.user}">
         <a href="login" th:text="${session.user.name}"></a>
-        <a href="forelogout">退出</a>
+        <a href="foreLogout">退出</a>
     </span>
 
     <span th:if="${null==session.user}">

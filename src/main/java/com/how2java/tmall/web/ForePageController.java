@@ -46,11 +46,15 @@ public class ForePageController {
         return "fore/login";
     }
 
-    @GetMapping(value = "/loginOut")
+    @GetMapping(value = "/foreLogout")
     public String loginOut(HttpSession session) {
         session.removeAttribute("user");
         return "redirect:home";
     }
 
+    @GetMapping(value = "/product")
+    public String product() {
+        return "fore/product";
+    }
 
 }

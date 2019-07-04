@@ -50,7 +50,7 @@
 
                 arrPara = search.split("&");
 
-                for (var i = 0; i < arrPara; i++) {
+                for (var i = 0; i < arrPara.length; i++) {
                     var paraPre = para + "=";
                     if (arrPara[i].indexOf(paraPre)==0&&paraPre.length<arrPara[i].length) {
                         arrVal[index] = decodeURI(arrPara[i].substr(paraPre.length)); //解码避免乱码

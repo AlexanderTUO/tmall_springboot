@@ -4,20 +4,20 @@
             var pid = getUrlParas("pid");
             var data4Vue = {
                 uri: "foreProduct",
-                products: '',
-                category: [],
+                p: '',
+                category: null,
                 firstProductImage: null,
                 pvs: [],
                 reviews: [],
                 showDetail: true,
-                showReview: true,
+                showReview: false,
                 user: {
                     name: "",
                     password: ""
                 },
             };
             var vue = new Vue({
-                el: "#wordingArea",
+                el: "#workingArea",
                 data: data4Vue,
                 mounted: function () {
                     linkDefaultActions();
@@ -25,19 +25,28 @@
                 },
                 methods:{
                     load:function () {
-                        var url = this.uri + pid;
+                        var url = this.uri +"/"+ pid;
                         axios.get(url).then(function (response) {
-                            var result = response.data;
-                            vue.products = result.product;
-                            vue.pvs = result.productValues;
+                            var result = response.data.data;
+                            vue.p = result.product;
+                            vue.pvs = result.propertyValue;
                             vue.reviews = result.reviews;
-                            vue.category = result.product.category;
-                            vue.firstProductImage = result.product.firstProductImage;
+                            vue.category = vue.p.category;
+                            vue.firstProductImage = vue.p.firstProductImage;
 
                             vue.$nextTick(function () {
                                 imgAndInfoPageRegisterListeners(vue);
                             })
                         })
+                    }
+                    ,
+                    toggle2Detail:function () {
+                        this.showDetail = true;
+                        this.showReview = false;
+                    },
+                    toggle2Review:function () {
+                        this.showDetail = false;
+                        this.showReview = true;
                     }
                 }
             })
@@ -45,7 +54,7 @@
     </script>
     <title>模仿天猫官网---{{p.name}}</title>
     <div class="categoryPictureInProductPageDiv">
-        <img v-if="category!=null" class="categoryPictureInProductPageDiv" :src="'img/category/'+category.id+'.jpg'">
+        <img v-if="category!=null" class="categoryPictureInProductPage" :src="'img/category/'+category.id+'.jpg'">
     </div>
     <div class="productPageDiv">
         <div th:replace="include/fore/product/imgAndInfo::html"></div>

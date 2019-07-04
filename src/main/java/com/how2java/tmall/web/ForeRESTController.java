@@ -97,7 +97,7 @@ public class ForeRESTController {
         return Result.fail("未登录");
     }
 
-    @GetMapping("foreProduct/{pid}")
+    @GetMapping("/foreProduct/{pid}")
     public Object product(@PathVariable("pid") int pid) {
         //获取产品
         Product product = productService.get(pid);
@@ -124,7 +124,7 @@ public class ForeRESTController {
         map.put("propertyValue", propertyValues);
         map.put("reviews", reviews);
 
-        return map;
+        return Result.success(map);
     }
 
     @GetMapping("foreCategory/{cid}")
