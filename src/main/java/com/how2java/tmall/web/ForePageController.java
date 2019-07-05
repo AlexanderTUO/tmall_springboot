@@ -57,4 +57,14 @@ public class ForePageController {
         return "fore/product";
     }
 
+    @GetMapping(value = "/category")
+    public String category() {
+        return "fore/category";
+    }
+
+    @GetMapping(value = "/search")
+    public String search() {
+        return "fore/search";
+    }
+
 }

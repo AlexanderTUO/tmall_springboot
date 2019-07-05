@@ -127,30 +127,43 @@ public class ForeRESTController {
         return Result.success(map);
     }
 
-    @GetMapping("foreCategory/{cid}")
+    @GetMapping("/foreCategory/{cid}")
     public Object category(@PathVariable int cid, String sort) {
         Category category = categoryService.get(cid);
         productService.fill(category);
         productService.setSaleAndReviewCount(category.getProducts());
         categoryService.removeCategoryFromProduct(category);
-        switch (sort) {
-            case "all":
-                Collections.sort(category.getProducts(),new ProductAllComparator());
-                break;
-            case "date":
-                Collections.sort(category.getProducts(),new ProductDateComparator());
-                break;
-            case "price":
-                Collections.sort(category.getProducts(), new ProductPriceComparator());
-                break;
-            case "review":
-                Collections.sort(category.getProducts(), new ProductReviewComparator());
-                break;
-            case "saleCount":
-                Collections.sort(category.getProducts(),new ProductSaleCountComparator());
-                break;
+        if (null != sort) {
+            switch (sort) {
+                case "all":
+                    Collections.sort(category.getProducts(),new ProductAllComparator());
+                    break;
+                case "date":
+                    Collections.sort(category.getProducts(),new ProductDateComparator());
+                    break;
+                case "price":
+                    Collections.sort(category.getProducts(), new ProductPriceComparator());
+                    break;
+                case "review":
+                    Collections.sort(category.getProducts(), new ProductReviewComparator());
+                    break;
+                case "saleCount":
+                    Collections.sort(category.getProducts(),new ProductSaleCountComparator());
+                    break;
+            }
         }
         return category;
+    }
+
+    @PostMapping("/foreSearch")
+    public Object search(String keyword) {
+        if (null == keyword) {
+            keyword = "";
+        }
+        List<Product> products = productService.search(keyword, 0, 20);
+        productImageService.setFirstProductImages(products);
+        productService.setSaleAndReviewCount(products);
+        return products;
     }
 
 }

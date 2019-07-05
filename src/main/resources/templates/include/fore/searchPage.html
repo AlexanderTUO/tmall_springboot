@@ -1,0 +1,34 @@
+<div th:fragment="html">
+    <script>
+        $(function () {
+            var keyword = getUrlParas("keyword");
+            var data4Vue = {
+                uri: "foreSearch",
+                products: []
+            };
+            var vue = new Vue({
+                el: "#workingArea",
+                data: data4Vue,
+                mounted: function () {
+                    this.load();
+                },
+                methods:{
+                    load:function () {
+                        var url = this.uri + "?keyword=" + keyword;
+                        axios.post(url).then(function (response) {
+                            vue.products = response.data;
+                            vue.$nextTick(
+                                linkDefaultActions()
+                            );
+                        });
+                    }
+                }
+            })
+        })
+    </script>
+    <div id="searchResult">
+        <div class="searchResultDiv">
+            <div th:replace="include/fore/productsBySearch::html"></div>
+        </div>
+    </div>
+</div>
