@@ -5,6 +5,7 @@ import com.how2java.tmall.pojo.*;
 import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
 import lombok.experimental.var;
+import org.apache.commons.collections.map.HashedMap;
 import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,9 @@ public class ForeRESTController {
 
     @Autowired
     ReviewService reviewService;
+
+    @Autowired
+    OrderItemService orderItemService;
 
     @GetMapping("/forehome")
     public Object hello() {
@@ -164,6 +168,94 @@ public class ForeRESTController {
         productImageService.setFirstProductImages(products);
         productService.setSaleAndReviewCount(products);
         return products;
+    }
+
+    /**
+     *  立即购买
+     * @param pid
+     * @param num
+     * @param session
+     * @return
+     */
+    @GetMapping("/foreBuyOne")
+    public Object buyOne(int pid,int num,HttpSession session) {
+        return buyOneAndAddCart(pid, num, session);
+    }
+
+    /**
+     *  添加到购物车
+     * @param pid
+     * @param num
+     * @param session
+     * @return
+     */
+    @GetMapping("/foreAddCart")
+    public Object foreAddCart(int pid,int num,HttpSession session) {
+        buyOneAndAddCart(pid, num, session);
+        return Result.success();
+    }
+
+    /**
+     * 添加订单项到购物车
+     * @param pid
+     * @param num
+     * @param session
+     * @return
+     */
+    private Object buyOneAndAddCart(int pid, int num, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        //分两种情况，一，购物车中订单项存在，则增加数量 二、不存在，则新创建订单项
+        List<OrderItem> orderItems = orderItemService.listByUser(user);
+        boolean flag = false;
+        int oiid = 0;
+        for (OrderItem orderItem : orderItems) {
+            if (pid == orderItem.getProduct().getId()) {
+                orderItem.setNumber(orderItem.getNumber()+num);
+                orderItemService.update(orderItem);
+                oiid = orderItem.getId();
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setNumber(num);
+            Product product = new Product();
+            product.setId(pid);
+            orderItem.setProduct(product);
+            orderItem.setUser(user);
+            orderItemService.add(orderItem);
+            oiid = orderItem.getId();
+        }
+        return oiid;
+    }
+
+    /**
+     * 根据订单项id获取订单项详细信息
+     * @param oiid
+     * @param session
+     * @return
+     */
+    @GetMapping("/foreBuy")
+    public Object foreBuy(String[] oiid, HttpSession session) {
+        List<OrderItem> list = new ArrayList<>();
+        float total = 0;
+        for (String stid : oiid) {
+            int id = Integer.parseInt(stid);
+            OrderItem item = orderItemService.get(id);
+            total += item.getProduct().getPromotePrice() * item.getNumber();
+            list.add(item);
+        }
+
+        productImageService.setFirstProductImageOnOrderItem(list);
+
+        session.setAttribute("ois", list);
+
+        Map<String, Object> map = new HashedMap();
+        map.put("orderItems", list);
+        map.put("total", total);
+
+        return Result.success(map);
     }
 
 }

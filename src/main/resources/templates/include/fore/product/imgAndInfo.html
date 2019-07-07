@@ -36,7 +36,7 @@
                 var url = "foreCheckLogin";
                 axios.get(url).then(function (response) {
                     if (response.data.code === 0) {
-                        var pid = vue.p.pid;
+                        var pid = vue.p.id;
                         var num = $(".productNumberSetting").val();
                         axios.get("foreAddCart?pid=" + pid + "&num=" + num).then(function (response) {
                             var result = response.data;
@@ -59,12 +59,12 @@
                 var url = "foreCheckLogin";
                 axios.get(url).then(function (response) {
                     if (response.data.code === 0) {
-                        var pid = vue.p.pid;
+                        var pid = vue.p.id;
                         var num = $(".productNumberSetting").val();
                         var url = "foreBuyOne?pid=" + pid + "&num=" + num;
                         axios.get(url).then(function (response) {
                             var oiid = response.data;
-                            location.href = "buy?oiid" + oiid;
+                            location.href = "buy?oiid=" + oiid;
                         })
                     } else {
                         //弹出登录框
@@ -90,7 +90,7 @@
                 axios.post(url, vue.user).then(function (response) {
                     var result = response.data;
                     if (result.code === 0) {
-                        location.href = "product?pid" + vue.p.pid;
+                        location.href = "product?pid=" + vue.p.id;
                     } else {
                         $("span.errorMessage").html(result.message);
                         $("div.loginErrorMessageDiv").css("visibility", "visible");
