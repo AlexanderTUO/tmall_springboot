@@ -10,14 +10,10 @@ import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
-import javax.swing.*;
-import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -27,7 +23,7 @@ import java.util.*;
  */
 @RestController
 public class ForeRESTController {
-    Logger logger = LoggerFactory.getLogger(ForeRESTController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ForeRESTController.class);
 
     @Autowired
     CategoryService categoryService;
@@ -256,6 +252,14 @@ public class ForeRESTController {
         map.put("total", total);
 
         return Result.success(map);
+    }
+
+    @GetMapping("/foreCart")
+    public Object foreCart(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<OrderItem> orderItems = orderItemService.listByUser(user);
+        productImageService.setFirstProductImageOnOrderItem(orderItems);
+        return orderItems;
     }
 
 }

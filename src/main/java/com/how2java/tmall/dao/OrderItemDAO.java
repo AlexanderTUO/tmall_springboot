@@ -4,7 +4,6 @@ import com.how2java.tmall.pojo.Order;
 import com.how2java.tmall.pojo.OrderItem;
 import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.pojo.User;
-import com.sun.org.apache.xml.internal.resolver.readers.OASISXMLCatalogReader;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

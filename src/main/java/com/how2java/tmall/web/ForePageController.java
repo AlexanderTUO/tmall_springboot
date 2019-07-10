@@ -72,4 +72,9 @@ public class ForePageController {
         return "fore/buy";
     }
 
+    @GetMapping(value = "/cart")
+    public String cart() {
+        return "fore/cart";
+    }
+
 }
