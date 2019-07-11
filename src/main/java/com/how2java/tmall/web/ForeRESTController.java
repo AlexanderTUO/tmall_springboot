@@ -261,6 +261,11 @@ public class ForeRESTController {
         return Result.success(map);
     }
 
+    /**
+     * 获取购物车订单项信息
+     * @param session
+     * @return
+     */
     @GetMapping("/foreCart")
     public Object foreCart(HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -289,6 +294,23 @@ public class ForeRESTController {
         map.put("total", total);
         map.put("oid", order.getId());
         return Result.success(map);
+    }
+
+    @GetMapping("/foreChangeOrderItem")
+    public Object foreChangeOrderItem(int pid, int num) {
+        OrderItem item = orderItemService.get(pid);
+        Product product = new Product();
+        product.setId(pid);
+        item.setProduct(product);
+        item.setNumber(num);
+        orderItemService.update(item);
+        return Result.success();
+    }
+
+    @PostMapping("/foreDeleteOrderItem")
+    public Object foreChangeOrderItem1(int oiid) {
+        orderItemService.delete(oiid);
+        return Result.success();
     }
 
 }

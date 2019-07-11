@@ -49,7 +49,7 @@
                 if (deleteOrderItem) {
                     var url = "foreDeleteOrderItem?oiid="+deleteOrderItemId;
                     axios.post(url).then(function (response) {
-                        if (response.code == 0) {
+                        if (response.data.code == 0) {
                             $("tr.cartProductItemTR[oiid=" + deleteOrderItemId + "]").hide();
                         } else {
                             location.href = "login";
@@ -80,7 +80,7 @@
                 var selectit = $(this).attr("selectit");
                 if (selectit == "selectit") {
                     $(this).attr("selectit", "false");
-                    $(this).attr("src", "img/site/cartSelected.png");
+                    $(this).attr("src", "img/site/cartNotSelected.png");
                     $(".cartProductItemIfSelected").each(function () {
                         $(this).attr("selectit", "false");
                         $(this).attr("src", "img/site/cartNotSelected.png");
@@ -179,10 +179,10 @@
          * 同步全选按钮
          */
         function syncSelect() {
-            var selectAll = false;
+            var selectAll = true;
             $(".cartProductItemIfSelected").each(function () {
                 if ($(this).attr("selectit") !== "selectit") {
-                    selectAll = true;
+                    selectAll = false;
                 }
             });
             if (selectAll) {
@@ -197,21 +197,21 @@
          */
         function calCartSumPriceAndNumber() {
             var sum = 0;
-            var totalnumber = 0;
+            var totalNumber = 0;
             $("img.cartProductItemIfSelected[selectit=selectit]").each(function () {
                 var oiid = $(this).attr("oiid");
-                var price = $(".cartProductItemSmallSumPrice").text();
-                price.replace(/,/g, "");
-                price.replace(/￥/g, "");
-                sum += price;
+                var price = $(".cartProductItemSmallSumPrice[oiid="+oiid+"]").text();
+                price = price.replace(/,/g, "");
+                price = price.replace(/￥/g, "");
+                sum += new Number(price);
 
-                var number = $(".orderItemNumberSetting[" + oiid + "]").val();
-                totalnumber += new Number(number);
-
-                $(".cartSumPrice").html("￥" + sum);
-                $(".cartTitlePrice").html("￥" + sum);
-                $(".cartSumNumber").html(totalnumber);
+                var number = $(".orderItemNumberSetting[oiid=" + oiid + "]").val();
+                totalNumber += new Number(number);
             })
+
+            $(".cartSumPrice").html("￥" + formatMoney(sum));
+            $(".cartTitlePrice").html("￥" + formatMoney(sum));
+            $(".cartSumNumber").html(totalNumber);
         }
 
         function syncPrice(pid, num, price) {
@@ -221,7 +221,7 @@
 
             calCartSumPriceAndNumber();
 
-            var url = "foreChangeOrderItem?pid=" + pid+"&num="+num;
+            var url = "/foreChangeOrderItem?pid=" + pid+"&num="+num;
             axios.get(url).then(function (response) {
                 if (response.data.code != 0) {
                     location.href("login");
@@ -255,8 +255,8 @@
                 <tbody>
                     <tr :oiid="oi.id" class="cartProductItemTR" v-for="oi in orderItems">
                         <td>
-                            <img selecteit="false" :oiid="oi.id" class="cartProductItemIfSelected"
-                                 src="img/site/cartSelected.png">
+                            <img selectit="false" :oiid="oi.id" class="cartProductItemIfSelected"
+                                 src="img/site/cartNotSelected.png">
                             <a style="display:none" href="#nowhere">
                                 <img src="img/site/cartSelected.png">
                             </a>
@@ -314,7 +314,7 @@
             </table>
         </div>
         <div class="cartFoot">
-            <img selectit="false" class="selectAllItem" src="img/site/cartSelected.png">
+            <img selectit="false" class="selectAllItem" src="img/site/cartNotSelected.png">
             <span>全选</span>
             <div class="pull-right">
                 <span>已选商品<span class="cartSumNumber">0</span>件</span>
