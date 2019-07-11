@@ -6,6 +6,7 @@ import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
 import lombok.experimental.var;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.math.RandomUtils;
 import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.persistence.Table;
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -45,6 +49,9 @@ public class ForeRESTController {
 
     @Autowired
     OrderItemService orderItemService;
+
+    @Autowired
+    OrderService orderService;
 
     @GetMapping("/forehome")
     public Object hello() {
@@ -260,6 +267,28 @@ public class ForeRESTController {
         List<OrderItem> orderItems = orderItemService.listByUser(user);
         productImageService.setFirstProductImageOnOrderItem(orderItems);
         return orderItems;
+    }
+
+    @PostMapping("foreCreateOrder")
+    public Object createOrder(Order order, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user) {
+            Result.fail("未登录");
+        }
+
+        String orderCode = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())+RandomUtils.nextInt(10000);
+        order.setOrderCode(orderCode);
+        order.setUser(user);
+        order.setCreateDate(new Date());
+
+        List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("ois");
+
+        float total = orderService.add(order, orderItems);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("total", total);
+        map.put("oid", order.getId());
+        return Result.success(map);
     }
 
 }

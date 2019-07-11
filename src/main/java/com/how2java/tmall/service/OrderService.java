@@ -1,6 +1,7 @@
 package com.how2java.tmall.service;
 
 import com.how2java.tmall.dao.OrderDAO;
+import com.how2java.tmall.dao.OrderItemDAO;
 import com.how2java.tmall.pojo.Order;
 import com.how2java.tmall.pojo.OrderItem;
 import com.how2java.tmall.util.Page4Navigator;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +27,9 @@ public class OrderService {
 	
 	@Autowired
     OrderDAO orderDAO;
+
+	@Autowired
+	OrderItemService orderItemService;
 	
 
 	public Page4Navigator<Order> list(int start, int size, int navigatePages) {
@@ -53,6 +59,30 @@ public class OrderService {
 	public void update(Order bean) {
 		orderDAO.save(bean);
 	}
+
+	public void add(Order order) {
+		orderDAO.save(order);
+	}
+
+	@Transactional(propagation=Propagation.REQUIRED,rollbackForClassName = "Exception")
+	public float add(Order order, List<OrderItem> orderItems) {
+		//新增订单，同时在订单项中加入订单id，用事务控制
+		float total = 0;
+		add(order);
+
+		//测试事务是否生效
+		if (false) {
+			throw new RuntimeException();
+		}
+
+		for (OrderItem orderItem : orderItems) {
+			orderItem.setOrder(order);
+			orderItemService.update(orderItem);
+			total += orderItem.getNumber() * orderItem.getProduct().getPromotePrice();
+		}
+		return total;
+	}
+
 
 
 
