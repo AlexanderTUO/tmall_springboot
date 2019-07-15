@@ -120,7 +120,7 @@
 
             $(".numberMinus").click(function () {
                 var pid = $(this).attr("pid");
-                var price = $("span.orderItemPromotePrice").text();
+                var price = $("span.orderItemPromotePrice[pid=" + pid + "]").text();
                 var num = $("input.orderItemNumberSetting[pid=" + pid + "]").val();
 
                 if (--num < 1) {
@@ -132,8 +132,8 @@
 
             $(".numberPlus").click(function () {
                 var pid = $(this).attr("pid");
-                var stock = $("span.orderItemStock").text();
-                var price = $("span.orderItemPromotePrice").text();
+                var stock = $("span.orderItemStock[pid=" + pid + "]").text();
+                var price = $("span.orderItemPromotePrice[pid=" + pid + "]").text();
                 var num = $("input.orderItemNumberSetting[pid=" + pid + "]").val();
 
                 if (++num > stock) {
@@ -227,9 +227,9 @@
         }
 
         function syncPrice(pid, num, price) {
-            $(".orderItemNumberSetting").val(num);
+            $(".orderItemNumberSetting[pid="+pid+"]").val(num);
             var cartProductItemSmallSumPrice = formatMoney(num * price);
-            $(".cartProductItemSmallSumPrice").html("￥" + cartProductItemSmallSumPrice);
+            $(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥" + cartProductItemSmallSumPrice);
 
             calCartSumPriceAndNumber();
 

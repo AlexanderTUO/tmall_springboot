@@ -284,6 +284,7 @@ public class ForeRESTController {
         String orderCode = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())+RandomUtils.nextInt(10000);
         order.setOrderCode(orderCode);
         order.setUser(user);
+        order.setStatus(OrderService.waitPay);
         order.setCreateDate(new Date());
 
         List<OrderItem> orderItems = (List<OrderItem>) session.getAttribute("ois");
