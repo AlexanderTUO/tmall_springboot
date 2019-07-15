@@ -1,5 +1,6 @@
 package com.how2java.tmall.web;
 
+import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -77,4 +78,18 @@ public class ForePageController {
         return "fore/cart";
     }
 
+    @GetMapping(value = "/alipay")
+    public String alipay() {
+        return "fore/alipay";
+    }
+
+    @GetMapping(value = "/payed")
+    public String payed() {
+        return "fore/payed";
+    }
+
+    @GetMapping(value = "/bought")
+    public String bought() {
+        return "fore/bought";
+    }
 }

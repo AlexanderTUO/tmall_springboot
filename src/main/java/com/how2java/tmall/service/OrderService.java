@@ -1,9 +1,9 @@
 package com.how2java.tmall.service;
 
 import com.how2java.tmall.dao.OrderDAO;
-import com.how2java.tmall.dao.OrderItemDAO;
 import com.how2java.tmall.pojo.Order;
 import com.how2java.tmall.pojo.OrderItem;
+import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -84,7 +84,14 @@ public class OrderService {
 	}
 
 
+	public List<Order> listByUserWithoutDelete(User user) {
+		List<Order> orders = listByUserNotDelete(user);
+		orderItemService.fill(orders);
+		return orders;
+	}
 
-
+	public List<Order> listByUserNotDelete(User user) {
+		return orderDAO.findByUserAndStatusNotOrderByIdDesc(user, OrderService.delete);
+	}
 
 }

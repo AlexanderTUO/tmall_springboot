@@ -275,7 +275,7 @@ public class ForeRESTController {
     }
 
     @PostMapping("foreCreateOrder")
-    public Object createOrder(Order order, HttpSession session) {
+    public Object createOrder(@RequestBody Order order, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (null == user) {
             Result.fail("未登录");
@@ -297,20 +297,46 @@ public class ForeRESTController {
     }
 
     @GetMapping("/foreChangeOrderItem")
-    public Object foreChangeOrderItem(int pid, int num) {
-        OrderItem item = orderItemService.get(pid);
-        Product product = new Product();
-        product.setId(pid);
-        item.setProduct(product);
+    public Object foreChangeOrderItem(int pid, int num,HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user) {
+            Result.fail("未登录");
+        }
+
+        OrderItem item = orderItemService.getByPid(pid);
         item.setNumber(num);
         orderItemService.update(item);
         return Result.success();
     }
 
     @PostMapping("/foreDeleteOrderItem")
-    public Object foreChangeOrderItem1(int oiid) {
+    public Object foreChangeOrderItem1(int oiid,HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user) {
+            Result.fail("未登录");
+        }
         orderItemService.delete(oiid);
         return Result.success();
+    }
+
+    @GetMapping("/forePayed")
+    public Object forePayed(int oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.waitDelivery);
+        order.setPayDate(new Date());
+        orderService.update(order);
+        return order;
+    }
+
+    @GetMapping(value = "foreBought")
+    public Object foreBought(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user) {
+            return Result.fail("未登录");
+        }
+        List<Order> list = orderService.listByUserWithoutDelete(user);
+        orderService.removeOrderFromOrderItem(list);
+        return list;
     }
 
 }

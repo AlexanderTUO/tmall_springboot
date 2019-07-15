@@ -33,6 +33,10 @@ public class OrderItemService {
 		return orderItemDAO.findOne(id);
 	}
 
+	public OrderItem getByPid(int pid) {
+		return orderItemDAO.findByPid(pid);
+	}
+
 	public void fill(List<Order> orders) {
 		for (Order order : orders) 
 			fill(order);

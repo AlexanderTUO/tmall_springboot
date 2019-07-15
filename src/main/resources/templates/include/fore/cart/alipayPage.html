@@ -1,12 +1,27 @@
 <div th:fragment="html">
     <script>
         $(function () {
-            
+            var oid = getUrlParas("oid");
+            var total = getUrlParas("total");
+
+            var data4Vue = {
+                oid: "",
+                total: ""
+            };
+
+            var vue = new Vue({
+                el: "#workingArea",
+                data: data4Vue,
+                mounted: function () {
+                    this.oid = oid;
+                    this.total = total;
+                }
+            });
         })
     </script>
     <div class="aliPayPageDiv">
         <div class="aliPayPageLogo">
-            <img class="pull-left" src="img/site/simpleLogo.pnd">
+            <img class="pull-left" src="img/site/simpleLogo.png">
             <div style="clear:both"></div>
         </div>
         <div>

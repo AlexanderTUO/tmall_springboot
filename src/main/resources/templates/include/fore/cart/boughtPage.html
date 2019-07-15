@@ -1,0 +1,166 @@
+<div th:fragment="html">
+    <script>
+        $(function () {
+            var data4Vue = {
+                uri: "foreBought",
+                orders: []
+            };
+            var vue = new Vue({
+                el: "#workingArea",
+                data: data4Vue,
+                mounted: function () {
+                    this.load();
+                },
+                methods: {
+                    load: function () {
+                        var url = this.uri;
+                        axios.get(url).then(function (response) {
+                            vue.orders = response.data;
+
+                            vue.$nextTick(function () {
+                                linkDefaultActions();
+                                orderPageRegisterListeners();
+                            })
+                        });
+                    }
+                }
+            });
+        });
+
+
+        var deleteOrderId = 0;
+        var deleteOrder = false;
+        function orderPageRegisterListeners() {
+            //根据状态选择事件
+            $("a[orderStatus]").on("click",function (p1) {
+                var status = $(this).attr("orderStatus");
+                if (status === "all") {
+                    $("table[orderStatus]").show();
+                } else {
+                    $("table[orderStatus]").hide();
+                    $("table[orderStatus="+status+"]").show();
+                }
+
+                $("div.orderType div").removeClass("selectedOrderType");
+                $(this).parent().addClass("selectedOrderType");
+            })
+
+            //绑定删除按钮事件
+            $(".deleteOrderLink").on("click", function (p1) {
+                deleteOrderId = $(this).attr("oid");
+                deleteOrder = false;
+                //打开模态框
+                $("#deleteConfirmModal").modal("show");
+            });
+
+            //绑定确认删除按钮事件
+            $("button.deleteConfirmButton").on("click",function (p1) {
+                deleteOrder = true;
+                $("#deleteConfirmModal").modal("hide");
+            });
+
+            //模态框关闭事件
+            $("#deleteConfirmModal").on("hide.bs.modal",function (p1) {
+                if (deleteOrder) {
+                    var url = "foreDeleteOrder" + deleteOrderId;
+                    axios.put(url).then(function (response) {
+                        if (response.data.code == 0) {
+                            $("table.orderListItemTable["+deleteOrderId+"]").hide;
+                        } else {
+                            location.href("login");
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+    <div class="boughtDiv">
+        <div class="orderType">
+            <div class="selectedOrderType"><a orderStatus="all" href="#nowhere">所有订单</a></div>
+            <div><a orderStatus="waitPay" href="#nowhere">待付款</a></div>
+            <div><a orderStatus="waitDelivery" href="#nowhere">待发货</a></div>
+            <div><a orderStatus="waitConfirm" href="#nowhere">待收货</a></div>
+            <div><a orderStatus="waitReview" href="#nowhere"  class="noRightborder">待评价</a></div>
+            <div class="orderTypeLastOne"><a class="noRightborder"></a></div>
+        </div>
+        <div style="clear: both"></div>
+        <div class="orderListTitle">
+            <table class="orderListTitleTable">
+                <tr>
+                    <td>宝贝</td>
+                    <td width="100px">单价</td>
+                    <td width="100px">数量</td>
+                    <td width="120px">实付款</td>
+                    <td width="100px">交易操作</td>
+                </tr>
+            </table>
+        </div>
+        <div class="orderListItem">
+            <table class="orderListItemTable"  v-for="o in orders" :orderStatus="o.status" :oid="o.id">
+                <tr class="orderListItemFirstTR">
+                    <td class="orderItemFirstTD" colspan="2">
+                        <b>{{o.createDate}|formatDateFilter}</b>
+                        <span>
+                            订单号{{o.orderNumber}}
+                        </span>
+                    </td>
+                    <td colspan="2">
+                        <img width="13px" src="img/site/orderItemTmall.png">天猫商城
+                    </td>
+                    <td colspan="1">
+                        <a href="#nowhere">
+                            <div class="orderItemWangWangGif"></div>
+                        </a>
+                    </td>
+                    <td class="orderItemDeleteTD">
+                        <a class="deleteOrderLink" :oid ="o.id" href="#nowhere">
+                            <span class="orderListItemDelete glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="orderItemProductInfoPartTR" v-for="oi,index in o.orderItems">
+                    <td class="orderItemProductInfoPartTD">
+                        <img width="80" height="80" :src="'img/productSingle_middle/'+oi.product.firstProductImage+'.png'">
+                    </td>
+                    <td class="orderItemProductInfoPartTD">
+                        <div class="orderListItemProductLinkOutDiv">
+                            <a :href="'product/'+'oi.product.id'">{{oi.product.name}}</a>
+                            <div class="orderListItemProductLinkInnerDiv">
+                                <img src="img/site/creditcard.png" title="支持信用卡支付">
+                                <img src="img/site/7day.png" title="7天无理由退换">
+                                <img src="img/site/promise.png" title="承诺没有假货">
+                            </div>
+                        </div>
+                    </td>
+                    <td class="orderItemProductInfoPartTD" width="100px">
+                        <div class="orderListItemProductOriginalPrice">￥{{oi.product.originalPrice|formatMoneyFilter}}</div>
+                        <div class="orderListItemProductPrice">￥{{oi.product.promotePrice|formatMoneyFilter}}</div>
+                    </td>
+                    <template v-if="index==0">
+                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemNumberTD">
+                            <span class="orderListItemNumber">{{o.total}}</span>
+                        </td>
+                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemProductRealPriceTD">
+                            <div class="orderListItemProductRealPrice">￥{{o.total|formatMoneyFilter}}</div>
+                            <div class="orderListItemPriceWithTransport">(含运费:￥0.00)</div>
+                        </td>
+                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemButtonTD" width="100px">
+                            <a v-if="o.status='waitPay'" :href="'alipay?oid='+o.id+'&total='o.total">
+                                <button class="orderListItemConfirm">付款</button>
+                            </a>
+                            <a v-if="o.status='waitDelivery'" href="#nowhere">
+                                <button>待发货</button>
+                            </a>
+                            <a v-if="o.status='waitConfirm'" :href="'confirm?oid='+o.id">
+                                <button class="orderListItemConfirm">确认收货</button>
+                            </a>
+                            <a v-if="o.status='waitReview'" :href="'review?oid='+o.id">
+                                <button class="orderListItemReview">评价</button>
+                            </a>
+                        </td>
+                    </template>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

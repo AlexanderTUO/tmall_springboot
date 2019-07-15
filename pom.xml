@@ -44,6 +44,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-test</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- thymeleaf -->
 		<dependency>
@@ -120,7 +126,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>5.0.10.RELEASE</version>
+			<!--<version>5.0.10.RELEASE</version>-->
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

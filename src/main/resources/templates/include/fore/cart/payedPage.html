@@ -1,7 +1,31 @@
 <div th:fragment="html">
     <script>
         $(function () {
-            
+            var oid = getUrlParas("oid");
+            var total = getUrlParas("total");
+
+            var data4Vue = {
+                uri: "forePayed",
+                order: [],
+                total: ""
+            };
+
+            var vue = new Vue({
+                el: "#workingArea",
+                data: data4Vue,
+                mounted: function () {
+                    this.total = total;
+                    this.load();
+                },
+                methods:{
+                    load:function () {
+                        var url = this.uri + "?oid=" + oid;
+                        axios.get(url).then(function (response) {
+                            vue.order = response.data;
+                        })
+                    }
+                }
+            });
         })
     </script>
     <div class="aliPayPageDiv">
@@ -18,6 +42,11 @@
                     </li>
                     <li>你的商品将于明天送到</li>
                 </ul>
+
+                <div class="paedCheckLinkDiv">
+                    <a class="payedCheckLink" href="bought">查看已买到的宝贝</a>
+                    <a class="payedCheckLink" href="bought">查看交易详情</a>
+                </div>
             </div>
             <div class="payedSeperateLine"></div>
             <div class="warningDiv">
