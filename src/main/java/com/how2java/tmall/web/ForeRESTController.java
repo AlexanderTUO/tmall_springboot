@@ -6,6 +6,11 @@ import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +21,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.MalformedParameterizedTypeException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -71,6 +77,18 @@ public class ForeRESTController {
             String message = "用户名已被使用，不能使用";
             return Result.fail(message);
         }
+
+        //shiro部分
+        String password = user.getPassword();
+        String salt = new SecureRandomNumberGenerator().nextBytes().toString();
+        int times = 2;
+        String algorithmName = "md5";
+        String encodedPassword = new SimpleHash(algorithmName, password, salt, times).toString();
+        user.setSalt(salt);
+        user.setPassword(encodedPassword);
+        String a = "";
+        String b = "";
+
         user.setName(name);
         userService.addUser(user);
         return Result.success();
@@ -81,11 +99,23 @@ public class ForeRESTController {
         String name = userParam.getName();
         name = HtmlUtils.htmlEscape(name);
 
-        User user = userService.getUser(name, userParam.getPassword());
-        if (null == user) {
-            return Result.fail("用户名或密码错误");
+//        User user = userService.getUser(name, userParam.getPassword());
+//        if (null == user) {
+//            return Result.fail("用户名或密码错误");
+//        }
+//        session.setAttribute("user",user);
+
+        //shiro方式
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(name, userParam.getPassword());
+        try {
+            subject.login(token);
+            User user = userService.getName(name);
+            session.setAttribute("user",user);
+        } catch (Exception e) {
+            String message = "账号密码错误";
+            Result.fail(message);
         }
-        session.setAttribute("user",user);
         return Result.success();
     }
 
@@ -96,9 +126,14 @@ public class ForeRESTController {
      */
     @GetMapping("/foreCheckLogin")
     public Object checkLogin(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
-            return Result.success();
+//        User user = (User) session.getAttribute("user");
+//        if (user != null) {
+//            return Result.success();
+//        }
+        //shiro方式
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            Result.success();
         }
         return Result.fail("未登录");
     }

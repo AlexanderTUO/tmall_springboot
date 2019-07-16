@@ -1,6 +1,8 @@
 package com.how2java.tmall.web;
 
 import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -49,7 +51,13 @@ public class ForePageController {
 
     @GetMapping(value = "/foreLogout")
     public String loginOut(HttpSession session) {
-        session.removeAttribute("user");
+//        session.removeAttribute("user");
+        //shiro方式
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.isAuthenticated()) {
+            subject.logout();
+
+        }
         return "redirect:home";
     }
 
