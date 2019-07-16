@@ -4,19 +4,18 @@ import com.how2java.tmall.comparator.*;
 import com.how2java.tmall.pojo.*;
 import com.how2java.tmall.service.*;
 import com.how2java.tmall.util.Result;
-import lombok.experimental.var;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.RandomUtils;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.persistence.Table;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -336,8 +335,80 @@ public class ForeRESTController {
             return Result.fail("未登录");
         }
         List<Order> list = orderService.listByUserWithoutDelete(user);
-        orderService.removeOrderFromOrderItem(list);
+        orderService.removeOrdersFromOrderItem(list);
         return list;
     }
+
+    @GetMapping(value = "foreConfirmPay")
+    public Object foreConfirmPay(int oid) {
+        Order order = orderService.get(oid);
+        orderItemService.fill(order);
+        orderService.removeOrderFromOrderItem(order);
+        return order;
+    }
+
+    @GetMapping("foreOrderConfirmed")
+    public Object foreOrderConfirmed(int oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.waitReview);
+        order.setConfirmDate(new Date());
+        orderService.update(order);
+        return Result.success();
+    }
+
+    /**
+     * 删除订单
+     * @param oid
+     * @return
+     */
+    @PutMapping("foreDeleteOrder")
+    public Object foreDeleteOrder(int oid) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.delete);
+        orderService.update(order);
+        return Result.success();
+    }
+
+    @GetMapping("/foreReview")
+    public Object foreReview(int oid) {
+        //获取订单、产品、对应产品的评价
+        Order order = orderService.get(oid);
+        orderItemService.fill(order);
+        orderService.removeOrderFromOrderItem(order);
+
+        Product product = order.getOrderItems().get(0).getProduct();
+        productService.setSaleAndReviewCount(product);
+        List<Review> reviews = reviewService.list(product);
+
+        Map<String,Object> map = new HashMap();
+        map.put("order", order);
+        map.put("product", product);
+        map.put("reviews", reviews);
+
+        return Result.success(map);
+    }
+
+    @PostMapping("/foreDoReview")
+    @Transactional(propagation=Propagation.REQUIRED,rollbackForClassName = "Exception")
+    public Object foreDoReview(int oid, int pid, String content,HttpSession session) {
+        Order order = orderService.get(oid);
+        order.setStatus(OrderService.finish);
+        orderService.update(order);
+
+        User user = (User) session.getAttribute("user");
+        content = HtmlUtils.htmlEscape(content);
+
+        Review review = new Review();
+        review.setContent(content);
+        review.setUser(user);
+        review.setCreateDate(new Date());
+        review.setProduct(productService.get(pid));
+        reviewService.add(review);
+
+        return Result.success();
+    }
+
+
+
 
 }

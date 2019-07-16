@@ -1,0 +1,119 @@
+<div th:fragment="html">
+    <script>
+        $(function () {
+            var oid = getUrlParas("oid");
+
+            var data4Vue = {
+                uri: "foreConfirmPay",
+                order: [],
+                total: ""
+            };
+
+            var vue = new Vue({
+                el: "#workingArea",
+                data: data4Vue,
+                mounted: function () {
+                    this.load();
+                },
+                methods:{
+                    load:function () {
+                        var url = this.uri + "?oid=" + oid;
+                        axios.get(url).then(function (response) {
+                            vue.order = response.data;
+                        })
+                    }
+                }
+            });
+        })
+    </script>
+    <div class="confirmPayPageDiv">
+        <div class="confirmPayImageDiv">
+            <img src="img/site/comformPayFlow.png">
+            <div class="confirmPayTime1">
+                {{order.createDate|formatDateFilter}}
+            </div>
+            <div class="confirmPayTime2">
+                {{order.payDate|formatDateFilter}}
+            </div>
+            <div class="confirmPayTime3">
+                {{order.deliveryDate|formatDateFilter}}
+            </div>
+        </div>
+        <div class="confirmPayOrderInfo">
+            <div class="confirmPayOrderInfoText">
+                我已收到货，同意支付宝付款
+            </div>
+        </div>
+        <div class="confirmPayOrderItemDiv">
+            <div class="confirmPayOrderInfoText">订单信息</div>
+            <table class="confirmPayOrderItemTable">
+                <thead>
+                <tr>
+                    <th colspan="2">宝贝</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>商品总价</th>
+                    <th>运费</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="oi in order.orderItems">
+                    <td>
+                        <img :src="'img/productSingle_middle/'+oi.product.firstProductImage.id+'.jpg'" width="50px">
+                    </td>
+                    <td class="confirmPayOrderItemProductLink">
+                        <a href="#nowhere">
+                            {{oi.product.name}}</a>
+                    </td>
+                    <td>
+                        ￥{{oi.product.originalPrice|formatMoneyFilter}}
+                    </td>
+                    <td>
+                        {{oi.number}}
+                    </td>
+                    <td>
+                        <span class="confirmPayProductPrice">
+                        ￥{{oi.product.promotePrice*oi.number|formatMoneyFilter}}</span>
+                    </td>
+                    <td>
+                        <span>
+                        快递：0.00</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="confirmPayOrderItemText pull-right">
+                实付款:<span>{{order.total|formatMoneyFilter}}</span>
+            </div>
+        </div>
+        <div class="confirmPayOrderDetailDiv">
+            <table class="confirmPayOrderDetailTable">
+                <tr>
+                    <td>订单编号：</td>
+                    <td>
+                        {{order.orderCode}}<img src="img/site/orderItemTmall.png">
+                    </td>
+                </tr>
+                <tr>
+                    <td>卖家昵称：</td>
+                    <td>
+                        天猫商铺：<span class="confirmPayOrderDetailWangWangGif"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>收货信息：</td>
+                    <td>{{order.receiver}},{{order.mobile}},{{order.address}}</td>
+                </tr>
+                <tr>
+                    <td>成交时间：</td>
+                    <td>{{order.createDate}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="confirmPayButtonDiv">
+            <div class="confirmPayWarning">请收到货后再点击确认收货，否则可能人货两空!</div>
+            <a :href="'orderConfirmed?oid='+order.id">
+                <button class="confirmPayButton">确认收货</button></a>
+        </div>
+    </div>
+</div>

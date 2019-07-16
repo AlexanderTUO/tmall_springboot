@@ -39,13 +39,13 @@ public class OrderService {
 		return new Page4Navigator<>(pageFromJPA,navigatePages);
 	}
 
-	public void removeOrderFromOrderItem(List<Order> orders) {
+	public void removeOrdersFromOrderItem(List<Order> orders) {
 		for (Order order : orders) {
 			removeOrderFromOrderItem(order);
 		}
 	}
 
-	private void removeOrderFromOrderItem(Order order) {
+	public void removeOrderFromOrderItem(Order order) {
 		List<OrderItem> orderItems= order.getOrderItems();
 		for (OrderItem orderItem : orderItems) {
 			orderItem.setOrder(null);

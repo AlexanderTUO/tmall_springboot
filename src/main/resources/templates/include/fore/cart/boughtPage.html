@@ -42,11 +42,11 @@
                 }
 
                 $("div.orderType div").removeClass("selectedOrderType");
-                $(this).parent().addClass("selectedOrderType");
+                $(this).parent("div").addClass("selectedOrderType");
             })
 
             //绑定删除按钮事件
-            $(".deleteOrderLink").on("click", function (p1) {
+            $("a.deleteOrderLink").on("click", function (p1) {
                 deleteOrderId = $(this).attr("oid");
                 deleteOrder = false;
                 //打开模态框
@@ -60,14 +60,14 @@
             });
 
             //模态框关闭事件
-            $("#deleteConfirmModal").on("hide.bs.modal",function (p1) {
+            $("#deleteConfirmModal").on("hidden.bs.modal",function (p1) {
                 if (deleteOrder) {
-                    var url = "foreDeleteOrder" + deleteOrderId;
+                    var url = "foreDeleteOrder?oid=" + deleteOrderId;
                     axios.put(url).then(function (response) {
                         if (response.data.code == 0) {
-                            $("table.orderListItemTable["+deleteOrderId+"]").hide;
+                            $("table.orderListItemTable[oid="+deleteOrderId+"]").hide();
                         } else {
-                            location.href("login");
+                            location.href="login";
                         }
                     })
                 }
@@ -98,17 +98,17 @@
         <div class="orderListItem">
             <table class="orderListItemTable"  v-for="o in orders" :orderStatus="o.status" :oid="o.id">
                 <tr class="orderListItemFirstTR">
-                    <td class="orderItemFirstTD" colspan="2">
-                        <b>{{o.createDate}|formatDateFilter}</b>
+                    <td colspan="2">
+                        <b>{{o.createDate|formatDateFilter("YYYY-MM-DD")}}</b>
                         <span>
-                            订单号{{o.orderNumber}}
+                            订单号:{{o.orderCode}}
                         </span>
                     </td>
                     <td colspan="2">
                         <img width="13px" src="img/site/orderItemTmall.png">天猫商城
                     </td>
                     <td colspan="1">
-                        <a href="#nowhere">
+                        <a href="#nowhere" class="wangwanglink">
                             <div class="orderItemWangWangGif"></div>
                         </a>
                     </td>
@@ -120,11 +120,11 @@
                 </tr>
                 <tr class="orderItemProductInfoPartTR" v-for="oi,index in o.orderItems">
                     <td class="orderItemProductInfoPartTD">
-                        <img width="80" height="80" :src="'img/productSingle_middle/'+oi.product.firstProductImage+'.png'">
+                        <img width="80" height="80" :src="'img/productSingle_middle/'+oi.product.firstProductImage.id+'.jpg'">
                     </td>
                     <td class="orderItemProductInfoPartTD">
                         <div class="orderListItemProductLinkOutDiv">
-                            <a :href="'product/'+'oi.product.id'">{{oi.product.name}}</a>
+                            <a :href="'product?pid='+oi.product.id">{{oi.product.name}}</a>
                             <div class="orderListItemProductLinkInnerDiv">
                                 <img src="img/site/creditcard.png" title="支持信用卡支付">
                                 <img src="img/site/7day.png" title="7天无理由退换">
@@ -137,24 +137,24 @@
                         <div class="orderListItemProductPrice">￥{{oi.product.promotePrice|formatMoneyFilter}}</div>
                     </td>
                     <template v-if="index==0">
-                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemNumberTD">
-                            <span class="orderListItemNumber">{{o.total}}</span>
+                        <td valign="top" :rowspan="o.orderItems.length" class=" orderListItemNumberTD orderItemOrderInfoPartTD">
+                            <span class="orderListItemNumber">{{o.totalNumber}}</span>
                         </td>
-                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemProductRealPriceTD">
+                        <td valign="top" :rowspan="o.orderItems.length"  width="120px" class="orderListItemProductRealPriceTD orderItemOrderInfoPartTD ">
                             <div class="orderListItemProductRealPrice">￥{{o.total|formatMoneyFilter}}</div>
                             <div class="orderListItemPriceWithTransport">(含运费:￥0.00)</div>
                         </td>
-                        <td valign="top" rowspan="o.orderItems.length" class="orderItemProductInfoPartTD orderListItemButtonTD" width="100px">
-                            <a v-if="o.status='waitPay'" :href="'alipay?oid='+o.id+'&total='o.total">
+                        <td valign="top" :rowspan="o.orderItems.length" class="orderListItemButtonTD orderItemOrderInfoPartTD" width="100px">
+                            <a v-if="o.status=='waitPay'" :href="'alipay?oid='+o.id+'&total='+o.total">
                                 <button class="orderListItemConfirm">付款</button>
                             </a>
-                            <a v-if="o.status='waitDelivery'" href="#nowhere">
-                                <button>待发货</button>
-                            </a>
-                            <a v-if="o.status='waitConfirm'" :href="'confirm?oid='+o.id">
+                            <div v-if="o.status=='waitDelivery'">
+                                <span>待发货</span>
+                            </div>
+                            <a v-if="o.status=='waitConfirm'" :href="'confirmPay?oid='+o.id">
                                 <button class="orderListItemConfirm">确认收货</button>
                             </a>
-                            <a v-if="o.status='waitReview'" :href="'review?oid='+o.id">
+                            <a v-if="o.status=='waitReview'" :href="'review?oid='+o.id">
                                 <button class="orderListItemReview">评价</button>
                             </a>
                         </td>
