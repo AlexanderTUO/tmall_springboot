@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="product")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})//这个属性不进行Json的转换，放置json转换异常错误
-@Document(indexName = "tmall_springboot",type = "product")//该注解将被包含在javadoc中
+@Document(indexName = "tmall_springboot",type = "product")//ElasticSearch用，indexName可看做数据库，type看做表
 @Data
 public class Product {
 //    JPA提供的四种标准用法为TABLE,SEQUENCE,IDENTITY,AUTO.
